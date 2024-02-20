@@ -85,9 +85,9 @@ public class Guard : MonoBehaviour
         // Dibujamos el cono de visi�n
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, 0.2f);
-        Gizmos.DrawRay(transform.position, Quaternion.Euler(0, visionAngle / 2, 0) * transform.forward * visionDistance);
-        Gizmos.DrawRay(transform.position, Quaternion.Euler(0, -visionAngle / 2, 0) * transform.forward * visionDistance);
-        Gizmos.DrawLine(transform.position, transform.position + transform.forward * visionDistance);
+        //Gizmos.DrawRay(transform.position, Quaternion.Euler(0, visionAngle / 2, 0) * transform.forward * visionDistance);
+        //Gizmos.DrawRay(transform.position, Quaternion.Euler(0, -visionAngle / 2, 0) * transform.forward * visionDistance);
+        //Gizmos.DrawLine(transform.position, transform.position + transform.forward * visionDistance);
 
         // Si el agente est� detectando algo, cambiamos el color del cono a rojo
         if (isDetected)
