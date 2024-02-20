@@ -7,10 +7,10 @@
 - `Guard.cs`: Script principal de agente Guardia
 
 ## Problemas conocidos
--El primer ejercicio no incluye función de destruir al jugador pero si detecta colisiones
--Si el guardia se desvía demasiado no volverá a su posición original 
--Se usó NavMesh parcialmente 
--No hay retraso para iniciar el movimiento en estado de alerta 
+- El primer ejercicio no incluye función de destruir al jugador pero si detecta colisiones
+- Si el guardia se desvía demasiado no volverá a su posición original 
+- Se usó NavMesh parcialmente 
+- No hay retraso para iniciar el movimiento en estado de alerta 
 
 ### Referencias
 
@@ -19,5 +19,5 @@
 - [ThegamedevTraum - Unity Tutorial](https://www.youtube.com/watch?v=MtLCmBG_pYo&list=LL&index=1&ab_channel=ThegamedevTraum)
 - [GameDev Resources - Point-to-Click Movement with the New Input System](https://gamedev-resources.com/point-to-click-movement-with-the-new-input-system-cinemachine/)
 - Dios 
-- Códigos de proyectos anteriores (
+- Códigos de proyectos anteriores 
 
