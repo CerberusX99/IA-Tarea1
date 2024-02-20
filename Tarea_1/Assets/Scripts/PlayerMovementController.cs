@@ -91,6 +91,11 @@ public class PlayerMovementController : MonoBehaviour
     /// <summary>
     /// Called when the player does a single left mouse button click
     /// </summary>
+    /// 
+
+    private float _evadeDistance = 5f; // Definir evadeDistance como campo privado en tu clase
+    private float _fleeForce = 5f; // Definir fleeForce como campo privado en tu clase
+
     private void Walk(CallbackContext context)
     {
         Ray ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -118,7 +123,8 @@ public class PlayerMovementController : MonoBehaviour
 
                 if (IsNavigating && Vector3.Dot(_direction, transform.forward) >= 0.25f)
                 {
-                    ApplyArriveBehavior(_moveTarget);
+                    // Llama a ApplyArriveBehavior con evadeDistance y fleeForce
+                    ApplyArriveBehavior(_moveTarget, _evadeDistance, _fleeForce);
                 }
             }
         }
@@ -134,7 +140,7 @@ public class PlayerMovementController : MonoBehaviour
         // AnimationController.Instance.CurrentState = CurrentMovement;
     }
 
-    private void ApplyArriveBehavior(Vector3 targetPosition)
+    private void ApplyArriveBehavior(Vector3 targetPosition, float evadeDistance, float fleeForce)
     {
         Vector3 direction = targetPosition - transform.position;
         float distance = direction.magnitude;
@@ -147,6 +153,18 @@ public class PlayerMovementController : MonoBehaviour
 
         // Calculate the steering force
         Vector3 steering = desiredVelocity - _agent.velocity;
+
+        Collider[] obstacles = Physics.OverlapSphere(transform.position, evadeDistance);
+        foreach (Collider obstacle in obstacles)
+        {
+            Vector3 toObstacle = obstacle.transform.position - transform.position;
+            if (toObstacle.magnitude < evadeDistance)
+            {
+                // If an obstacle is within evadeDistance, apply flee behavior
+                Vector3 fleeDirection = transform.position - obstacle.transform.position;
+                steering += fleeDirection.normalized * fleeForce;
+            }
+        }
 
         // Apply the steering force to the agent
         _agent.velocity += steering;

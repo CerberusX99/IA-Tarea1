@@ -6,9 +6,9 @@ using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
-     public float followSpeed = 15f;
+    public float followSpeed = 15f;
     public float slowdownDistance = 1f;
-    public Transform targetObject; // Reference to the game object to follow
+    public Transform targetObject; // Referencia del GameObject
     Vector3 velocity = Vector3.zero;
 
     public NavMeshAgent agent3;
@@ -51,6 +51,11 @@ public class Guard : MonoBehaviour
          DetectObjects(); // Detectamos objetos en el cono de visi�n
          StateC();
     }
+
+    //Esta funcion determina si el guardia ha detectado algun objeto en su cono de
+    //vision, tambien calcula si el angulo entre la direccion hacia adelante del guardia y
+    //la direccion al objeto que esta dentro del rango y si la distancia al objeto está
+    // dentro de su rango de visión
      public void DetectObjects()
     {
         isDetected = false; // Reiniciamos la detecci�n
@@ -69,6 +74,12 @@ public class Guard : MonoBehaviour
            // Debug.Log("Detectado");
         }
     }
+
+    // Gizmos se utiliza para dibujar el campo de visión del guardia.
+    // Un cono amarilla que representa el campo de vision del guardia
+    // Rayos que representan los limites del campo de visión
+    // Un cono rojo si el guardia ha detectado algo, o verde si no ha detectado nada.
+
     public void OnDrawGizmos()
     {
         // Dibujamos el cono de visi�n
@@ -93,6 +104,10 @@ public class Guard : MonoBehaviour
         Gizmos.DrawRay(transform.position, Quaternion.Euler(0, -visionAngle / 2, 0) * transform.forward * visionDistance);
         Gizmos.DrawLine(transform.position, transform.position + transform.forward * visionDistance);
     }
+    //La funcion maneja los diferentes estados del guardia;
+    // Si no ah detectado ningun objeto y no se está moviendo a la posición guardada o atacando, 
+    // el guardia se encuentra en su estado normal. Si detecta un objeto, entra un estado de alerta 
+    // y comienza a seguirlo.
     public void StateC()
     {
         if(isDetected == false && isMovingToSavedPosition == false && isAttacking == false)
@@ -118,8 +133,12 @@ public class Guard : MonoBehaviour
     
     }
 
-    
-public void NormalS()
+
+    //La función estado normal, el guardia rota sobre su eje vertical para buscar
+    //sus objetivos. La rotación se realiza cada cierto tiempo y se controla mediante
+    //la variable rotationTime. La amplitud de la rotación y la velocidad se pueden
+    // ajustar mediante las variables rotationSpeed y visionAgle.
+    public void NormalS()
 {
     
     Debug.Log("Normal");
@@ -139,6 +158,9 @@ public void NormalS()
     }
 }
 
+    // En la función el guardia esta en el estado de alerta donde aumenta su ángulo de
+    //visión para estar más alerta.
+
     public void AlertS()
     {
         if(isAttacking == false){
@@ -152,7 +174,11 @@ public void NormalS()
         }
     }
 
-public void AttackS()
+    //En esta función el guardia persigue al agente y lo ataca al ser detectado. Se mueve hacia
+    //la posición del agente a una posición determinada y ya alacanzado el objetivo ataca
+    //durante un tiempo determinado.
+
+    public void AttackS()
 {
     if(attackTime<=5f){
       
@@ -181,6 +207,8 @@ public void AttackS()
 
 }
 
+    //Las funciones SavePosition y Load Position se encargan de guardar y cargar la posición actual
+    //del guardia en el juego.
 
     public void SavePosition()
     {
@@ -205,7 +233,9 @@ public void AttackS()
         }
     }
 
-private IEnumerator MoveToSavedPosition(Vector3 targetPosition)
+    //MoveToSavedPosition y MoveToStartPosition las funciones se utilizan para mover
+    // al guardia a una posición específica en el juego 
+    private IEnumerator MoveToSavedPosition(Vector3 targetPosition)
 {
     isMovingToSavedPosition = true;
 
@@ -244,7 +274,10 @@ private IEnumerator MoveToStartPosition(Vector3 targetPosition)
     isMovingToSavedPosition = false;
 }
 
-public void OnCollisionEnter(Collision collision)
+
+    //la función se activa cuando el guardia entra en contacto con otro objeto.
+    //En este caso, si el objeto es el jugador, reproduce un sonido de muerte.)
+    public void OnCollisionEnter(Collision collision)
 {
     if (collision.gameObject.tag == "Player")
     {
