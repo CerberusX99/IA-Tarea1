@@ -1,5 +1,5 @@
 # Examen 1 IA
-
+- Equipo: Ximena Perez Lara y Rosalío Olvera
 
 
 ##  Overview
