@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,11 @@ using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
+     public float followSpeed = 15f;
+    public float slowdownDistance = 1f;
+    public Transform targetObject; // Reference to the game object to follow
+    Vector3 velocity = Vector3.zero;
+
     public NavMeshAgent agent3;
     public Transform agent; // El agente que tiene esta visi�n de cono
     public float visionAngle = 45f; // �ngulo de visi�n del cono
@@ -27,6 +33,9 @@ public class Guard : MonoBehaviour
     public float rotationTime = 0f;
     public Vector3 startPosition;
     public float attackTime = 0f;
+    public AudioClip deathSound;
+    public AudioSource audioSource;
+
     private void Awake()
     {
         agent= agent2.transform;
@@ -95,13 +104,13 @@ public class Guard : MonoBehaviour
         else if(isDetected == true)
         {
             detectedTime += Time.deltaTime;
-            if (detectedTime >= maxDetectedTime)
+            if (detectedTime >= maxDetectedTime && isAttacking == false)
             {
-                Debug.Log("Attack");
+                
                 AttackS();
-                //detectedTime = 0f;
+                detectedTime = 0f;
             }
-            else
+            else if (isAttacking == false)
             {
                 AlertS();
             }
@@ -145,21 +154,31 @@ public void NormalS()
 
 public void AttackS()
 {
-    if (attackTime <= 5f)
-    {
-        // Move towards the target position during the attack time
-        agent3.SetDestination(agent2.transform.position);
-        attackTime += Time.deltaTime;
-        isAttacking = true; 
+    if(attackTime<=5f){
+      
+            Debug.Log("Attack");
+            attackTime ++;
+            isAttacking = true;
+            Vector3 targetPosition = targetObject.position; // Use the position of the target object
+            Vector3 playerDistance = targetPosition - transform.position;
+            Vector3 desiredVelocity = playerDistance.normalized * followSpeed;
+            Vector3 steering = desiredVelocity - velocity;
+
+            velocity += steering * Time.deltaTime;
+            float slowDownFactor = Mathf.Clamp01(playerDistance.magnitude / slowdownDistance);
+            velocity *= slowDownFactor;
+
+            transform.position += (Vector3)velocity * Time.deltaTime;
+          
     }
-    else
-    {
-        // If the attack time exceeds 5 seconds, return to the original position
-        
-        //attackTime = 0f;
-        isAttacking = false;
+    else {
+        attackTime = 0f;
+        Debug.Log("Bai");
         StartCoroutine(MoveToStartPosition(startPosition));
+        isAttacking = false;
+        
     }
+
 }
 
 
@@ -204,6 +223,7 @@ private IEnumerator MoveToSavedPosition(Vector3 targetPosition)
     if (isDetected==false)
     {
         StartCoroutine(MoveToStartPosition(startPosition));
+        isAttacking = false;
     }
 }
 
@@ -224,5 +244,16 @@ private IEnumerator MoveToStartPosition(Vector3 targetPosition)
     isMovingToSavedPosition = false;
 }
 
+public void OnCollisionEnter(Collision collision)
+{
+    if (collision.gameObject.tag == "Player")
+    {
+        if (deathSound != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+        
+    }
    
+}
 }

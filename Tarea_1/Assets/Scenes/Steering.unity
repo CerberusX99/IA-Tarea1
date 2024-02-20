@@ -283,7 +283,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 30842850}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0cf8cddc456e93468f79d97c1f6a6a9, type: 3}
   m_Name: 
@@ -298,13 +298,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 30842850}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d4d4f91bcba6e347b82e22008c6854b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   followSpeed: 15
   slowdownDistance: 1
+  targetObject: {fileID: 0}
 --- !u!1 &466160156
 GameObject:
   m_ObjectHideFlags: 3
@@ -957,6 +958,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2983198047461533436, guid: 674d6f0bfccc86c48af64ab5801d62ce, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1530577579}
+    - targetCorrespondingSourceObject: {fileID: 2983198047461533436, guid: 674d6f0bfccc86c48af64ab5801d62ce, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1530577587}
   m_SourcePrefab: {fileID: 100100000, guid: 674d6f0bfccc86c48af64ab5801d62ce, type: 3}
 --- !u!1 &1391316191
 GameObject:
@@ -1231,6 +1235,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 975eef730dca02146bcae45d0c3e4269, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  followSpeed: 15
+  slowdownDistance: 1
+  targetObject: {fileID: 30842856}
   agent3: {fileID: 1530577579}
   agent: {fileID: 30842856}
   visionAngle: 45
@@ -1267,6 +1274,21 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1530577587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530577562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d4d4f91bcba6e347b82e22008c6854b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followSpeed: 15
+  slowdownDistance: 1
+  targetObject: {fileID: 30842856}
 --- !u!1 &1823543907
 GameObject:
   m_ObjectHideFlags: 0
