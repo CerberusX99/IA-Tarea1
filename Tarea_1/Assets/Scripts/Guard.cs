@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class Guard : MonoBehaviour
 {
+    public string sceneToLoad;
     public float followSpeed = 15f;
     public float slowdownDistance = 1f;
     public Transform targetObject; // Referencia del GameObject
@@ -277,16 +279,21 @@ private IEnumerator MoveToStartPosition(Vector3 targetPosition)
 
     //la función se activa cuando el guardia entra en contacto con otro objeto.
     //En este caso, si el objeto es el jugador, reproduce un sonido de muerte.)
-    public void OnCollisionEnter(Collision collision)
-{
-    if (collision.gameObject.tag == "Player")
+ public void OnCollisionEnter(Collision collision)
     {
-        if (deathSound != null)
+        if (collision.gameObject.CompareTag("Player"))
         {
-            audioSource.PlayOneShot(deathSound);
+            if (deathSound != null )
+            {
+                audioSource.PlayOneShot(deathSound);
+                Invoke("LoadNextScene", deathSound.length); 
+            }
         }
-        
     }
-   
-}
+
+    void LoadNextScene()
+    {
+        SceneManager.LoadScene(sceneToLoad);
+    }
+
 }
