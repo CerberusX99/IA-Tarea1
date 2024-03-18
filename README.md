@@ -5,7 +5,7 @@
 ##  Overview
 
 - `NavMesh`: Escena de la tarea de NavMesh
-- `Tarea2`: Escena de la tarea de Breadth-First Search
+- `Tarea2-3`: Escena de la tarea de Breadth-First Search y Pathfinding y Steering
 
 ## Tarea NavMesh
 - El enemigo esta borrachito
