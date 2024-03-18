@@ -59,7 +59,7 @@ public class BaseGraph : MonoBehaviour
     public GameObject NF;
     public GameObject NG;
     public GameObject NH;
-
+     private List<Node> pathToFollow = new List<Node>();
     public Color targetColor = Color.red; // Color para resaltar el camino encontrado
     public float colorChangeDelay = 0.5f; // Retraso entre cambios de color
 
@@ -123,16 +123,34 @@ public class BaseGraph : MonoBehaviour
         Edges.Add(EG);
         Edges.Add(EH);
 
-        // Iniciar BFS desde el nodo H hacia el nodo D
+      // Iniciar BFS desde el nodo H hacia el nodo D
         NodeStateDict[H] = NodeState.Open;
         bool pathExists = IterativeBFS(H, D);
         if (pathExists)
         {
             Debug.Log("Sí hay un camino de H a D.");
+            StorePathToFollow(D); // Almacenar el camino encontrado
             PrintPath(D);
         }
         else
             Debug.Log("No hay camino de H a D.");
+    }
+  private void StorePathToFollow(Node target)
+{
+    pathToFollow.Clear();
+    Node currentNode = target;
+    while (currentNode != null)
+    {
+        pathToFollow.Add(currentNode);
+        currentNode = currentNode.parent;
+    }
+    pathToFollow.Reverse(); // Invertir el camino para que sea en el orden correcto
+}
+
+    // Método para obtener el camino que el agente debe seguir
+    public List<Node> GetPathToFollow()
+    {
+        return pathToFollow;
     }
 
     // Método para realizar la búsqueda BFS de manera iterativa
