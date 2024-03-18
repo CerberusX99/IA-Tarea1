@@ -7,7 +7,7 @@
 - `NavMesh`: Escena de la tarea de NavMesh
 - `Tarea2`: Escena de la tarea de Breadth-First Search
 
-##Tarea NavMesh
+## Tarea NavMesh
 - El enemigo esta borrachito
 - A veces no le gusta subirse al puente
 - No regresa a una posición
