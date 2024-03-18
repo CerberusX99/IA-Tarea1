@@ -7,13 +7,13 @@
 - `NavMesh`: Escena de la tarea de NavMesh
 - `Tarea2`: Escena de la tarea de Breadth-First Search
 
-## Problemas conocidos Tarea NavMesh
+### Problemas conocidos Tarea NavMesh
 - El enemigo esta borrachito
 - A veces no le gusta subirse al puente
 - No regresa a una posición
-## Detalles 
+### Detalles 
 - Se hizo una combinación de códigos pero al final aterrizamos en este
-### Breadth-First Search
+## Breadth-First Search
 - Se combinó el código
 - De forma muy primitiva se representa visualmente
 ### Referencias
