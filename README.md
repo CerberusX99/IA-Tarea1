@@ -1,23 +1,24 @@
-# Examen 1 IA
+# IA segundo parcial
 - Equipo: Ximena Perez Lara y Rosalío Olvera
 
 
 ##  Overview
 
-- `Guard.cs`: Script principal de agente Guardia
+- `NavMesh`: Escena de la tarea de NavMesh
 
-## Problemas conocidos
-- El primer ejercicio no incluye función de destruir al jugador pero si detecta colisiones
-- Si el guardia se desvía demasiado no volverá a su posición original 
-- Se usó NavMesh parcialmente 
-- No hay retraso para iniciar el movimiento en estado de alerta 
+## Problemas conocidos Tarea NavMesh
+- El enemigo esta borrachito
+- A veces no le gusta subirse al puente
+- No regresa a una posición
+## Detalles 
+- Se hizo una combinación de códigos pero al final aterrizamos en este
 
 ### Referencias
 
-- [OpenWebinars - Unity 3D](https://www.youtube.com/watch?v=TLq_wSJVYys&ab_channel=OpenWebinars)
-- [Dave/GameDevelopment - Unity Tutorial](https://www.youtube.com/watch?v=UjkSFoLxesw&ab_channel=Dave%2FGameDevelopment)
-- [ThegamedevTraum - Unity Tutorial](https://www.youtube.com/watch?v=MtLCmBG_pYo&list=LL&index=1&ab_channel=ThegamedevTraum)
-- [GameDev Resources - Point-to-Click Movement with the New Input System](https://gamedev-resources.com/point-to-click-movement-with-the-new-input-system-cinemachine/)
+- https://www.youtube.com/watch?v=UjkSFoLxesw&t=214s&ab_channel=Dave%2FGameDevelopment
+- https://www.youtube.com/watch?v=dYs0WRzzoRc&ab_channel=JonDevTutorials
+- https://www.youtube.com/watch?v=u2EQtrdgfNs&t=2s&ab_channel=CreativeMediaTutorials
+- https://www.youtube.com/watch?v=atCOd4o7tG4&ab_channel=CodeMonkey
 - Dios 
 - Códigos de proyectos anteriores 
 
