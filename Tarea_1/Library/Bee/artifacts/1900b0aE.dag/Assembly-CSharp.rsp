@@ -109,6 +109,7 @@
 -define:ENABLE_UNITY_COLLECTIONS_CHECKS
 -define:ENABLE_BURST_AOT
 -define:UNITY_TEAM_LICENSE
+-define:UNITY_PRO_LICENSE
 -define:ENABLE_CUSTOM_RENDER_TEXTURE
 -define:ENABLE_DIRECTOR
 -define:ENABLE_LOCALIZATION
@@ -367,11 +368,11 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.4f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.4f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/Scripts/AnimationController.cs"
+"Assets/Scripts/BaseGraph.cs"
 "Assets/Scripts/CRot.cs"
 "Assets/Scripts/GeneralExtensions.cs"
 "Assets/Scripts/Guard.cs"
 "Assets/Scripts/InputControls.cs"
-"Assets/Scripts/Node.cs"
 "Assets/Scripts/PlayerMovementController.cs"
 "Assets/Scripts/PM.cs"
 "Assets/Scripts/RandomM.cs"
