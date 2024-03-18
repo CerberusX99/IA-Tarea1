@@ -16,6 +16,11 @@
 ## Breadth-First Search
 - Se combinó el código
 - De forma muy primitiva se representa visualmente
+## Pathfinding y Steering
+- Se terminó combinando en la misma escena de la tarea 2
+- El agente como que si llega pero le da la loquera
+- Se añadió `StorePathToFollow(Node target)` y `List<Node> GetPathToFollow()` para poder acceder a ellos desde el codigo del agente
+- Se añadió `AgentT2` que es el script que controla al agente 
 ### Referencias
 
 - https://www.youtube.com/watch?v=UjkSFoLxesw&t=214s&ab_channel=Dave%2FGameDevelopment
