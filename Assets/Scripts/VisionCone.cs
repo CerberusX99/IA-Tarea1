@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class VisionCone : MonoBehaviour
 {
-    public Transform agent; // El agente que tiene esta visión de cono
-    public float visionAngle = 45f; // Ángulo de visión del cono
-    public float visionDistance = 10f; // Distancia máxima de visión
+    public Transform agent; // El agente que tiene esta visiï¿½n de cono
+    public float visionAngle = 45f; // ï¿½ngulo de visiï¿½n del cono
+    public float visionDistance = 10f; // Distancia mï¿½xima de visiï¿½n
 
-    private bool isDetected = false; // Indica si el agente ha detectado algo
+    public bool isDetected = false; // Indica si el agente ha detectado algo
 
-    // Método para detectar objetos dentro del cono de visión
+    // Mï¿½todo para detectar objetos dentro del cono de visiï¿½n
     private void DetectObjects()
     {
-        isDetected = false; // Reiniciamos la detección
+        isDetected = false; // Reiniciamos la detecciï¿½n
 
         // Obtenemos el vector que apunta desde el agente hacia adelante
         Vector3 directionToAgent = agent.position - transform.position;
 
-        // Calculamos el ángulo entre la dirección al agente y la dirección hacia adelante del cono
+        // Calculamos el ï¿½ngulo entre la direcciï¿½n al agente y la direcciï¿½n hacia adelante del cono
         float angleToAgent = Vector3.Angle(transform.forward, directionToAgent);
 
-        // Si el ángulo está dentro del rango del cono y el agente está dentro de la distancia de visión
+        // Si el ï¿½ngulo estï¿½ dentro del rango del cono y el agente estï¿½ dentro de la distancia de visiï¿½n
         if (angleToAgent < visionAngle / 2 && directionToAgent.magnitude < visionDistance)
         {
             // El agente ha sido detectado
@@ -29,35 +29,35 @@ public class VisionCone : MonoBehaviour
         }
     }
 
-    // Método para dibujar el cono de visión y mostrar visualmente la detección
+    // Mï¿½todo para dibujar el cono de visiï¿½n y mostrar visualmente la detecciï¿½n
     private void OnDrawGizmos()
     {
-        // Dibujamos el cono de visión
+        // Dibujamos el cono de visiï¿½n
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, 0.2f);
         Gizmos.DrawRay(transform.position, Quaternion.Euler(0, visionAngle / 2, 0) * transform.forward * visionDistance);
         Gizmos.DrawRay(transform.position, Quaternion.Euler(0, -visionAngle / 2, 0) * transform.forward * visionDistance);
         Gizmos.DrawLine(transform.position, transform.position + transform.forward * visionDistance);
 
-        // Si el agente está detectando algo, cambiamos el color del cono a rojo
+        // Si el agente estï¿½ detectando algo, cambiamos el color del cono a rojo
         if (isDetected)
         {
             Gizmos.color = Color.red;
         }
-        else // Si no está detectando nada, el color del cono es verde
+        else // Si no estï¿½ detectando nada, el color del cono es verde
         {
             Gizmos.color = Color.green;
         }
 
-        // Dibujamos el cono de visión
+        // Dibujamos el cono de visiï¿½n
         Gizmos.DrawRay(transform.position, Quaternion.Euler(0, visionAngle / 2, 0) * transform.forward * visionDistance);
         Gizmos.DrawRay(transform.position, Quaternion.Euler(0, -visionAngle / 2, 0) * transform.forward * visionDistance);
         Gizmos.DrawLine(transform.position, transform.position + transform.forward * visionDistance);
     }
 
-    // Método que se llama en cada frame
+    // Mï¿½todo que se llama en cada frame
     private void Update()
     {
-        DetectObjects(); // Detectamos objetos en el cono de visión
+        DetectObjects(); // Detectamos objetos en el cono de visiï¿½n
     }
 }

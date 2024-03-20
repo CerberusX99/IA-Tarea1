@@ -59,7 +59,20 @@ public class BaseGraph : MonoBehaviour
     public GameObject NF;
     public GameObject NG;
     public GameObject NH;
-     private List<Node> pathToFollow = new List<Node>();
+    public List<GameObject> GetTargetCubes()
+    {
+        List<GameObject> targetCubes = new List<GameObject>();
+        if (NA != null) targetCubes.Add(NA);
+        if (NB != null) targetCubes.Add(NB);
+        if (NC != null) targetCubes.Add(NC);
+        if (ND != null) targetCubes.Add(ND);
+        if (NE != null) targetCubes.Add(NE);
+        if (NF != null) targetCubes.Add(NF);
+        if (NG != null) targetCubes.Add(NG);
+        if (NH != null) targetCubes.Add(NH);
+        return targetCubes;
+    }
+    private List<Node> pathToFollow = new List<Node>();
     public Color targetColor = Color.red; // Color para resaltar el camino encontrado
     public float colorChangeDelay = 0.5f; // Retraso entre cambios de color
 
@@ -123,29 +136,30 @@ public class BaseGraph : MonoBehaviour
         Edges.Add(EG);
         Edges.Add(EH);
 
-      // Iniciar BFS desde el nodo H hacia el nodo D
+        // Iniciar BFS desde el nodo H hacia el nodo D
         NodeStateDict[H] = NodeState.Open;
-        bool pathExists = IterativeBFS(H, D);
+        bool pathExists = IterativeBFS(H, C);
         if (pathExists)
         {
-            Debug.Log("Sí hay un camino de H a D.");
-            StorePathToFollow(D); // Almacenar el camino encontrado
-            PrintPath(D);
+            Debug.Log("Sí hay un camino de H a C.");
+            StorePathToFollow(C); // Almacenar el camino encontrado
+            PrintPath(C);
         }
         else
-            Debug.Log("No hay camino de H a D.");
+            Debug.Log("No hay camino de H a C.");
     }
-  private void StorePathToFollow(Node target)
-{
-    pathToFollow.Clear();
-    Node currentNode = target;
-    while (currentNode != null)
+
+    private void StorePathToFollow(Node target)
     {
-        pathToFollow.Add(currentNode);
-        currentNode = currentNode.parent;
+        pathToFollow.Clear();
+        Node currentNode = target;
+        while (currentNode != null)
+        {
+            pathToFollow.Add(currentNode);
+            currentNode = currentNode.parent;
+        }
+        pathToFollow.Reverse(); // Invertir el camino para que sea en el orden correcto
     }
-    pathToFollow.Reverse(); // Invertir el camino para que sea en el orden correcto
-}
 
     // Método para obtener el camino que el agente debe seguir
     public List<Node> GetPathToFollow()
@@ -154,72 +168,56 @@ public class BaseGraph : MonoBehaviour
     }
 
     // Método para realizar la búsqueda BFS de manera iterativa
-    /* *Se implementa el algoritmo de busqueda en anchura de manera
-       iterativa.
-       *Utiliza una cola para almacenar los nodos abiertos y un
-       conjunto para los nodos cerrados
-       * Explora los nodos vecinos del nodo actual hasta encontrar
-         encontrar el nodo objetivo o agotar todos los nodos.*/
-    public bool IterativeBFS(Node Origin, Node Target)
+    
+public bool IterativeBFS(Node Origin, Node Target)
+{
+    OpenQueue.Enqueue(Origin);
+
+    while (OpenQueue.Count != 0)
     {
-        OpenQueue.Enqueue(Origin);
+        Node currentNode = OpenQueue.Dequeue();
+        List<Edge> currentNeighbors = FindNeighbors(currentNode);
 
-        while (OpenQueue.Count != 0)
+        foreach (Edge e in currentNeighbors)
         {
-            Node currentNode = OpenQueue.Dequeue();
-            List<Edge> currentNeighbors = FindNeighbors(currentNode);
+            Node NonCurrentNode = currentNode != e.a ? e.a : e.b;
+            if (ClosedSetList.Contains(NonCurrentNode))
+                continue;
 
-            foreach (Edge e in currentNeighbors)
+            if (NonCurrentNode == Target)
             {
-                Node NonCurrentNode = currentNode != e.a ? e.a : e.b;
-                if (ClosedSetList.Contains(NonCurrentNode))
-                    continue;
-
-                if (NonCurrentNode == Target)
-                {
-                    NonCurrentNode.parent = currentNode;
-                    return true;
-                }
-                else
-                {
-                    OpenQueue.Enqueue(NonCurrentNode);
-                    NonCurrentNode.parent = currentNode;
-                }
+                NonCurrentNode.parent = currentNode;
+                return true;
             }
-
-            ClosedSetList.Add(currentNode);
+            else
+            {
+                OpenQueue.Enqueue(NonCurrentNode);
+                NonCurrentNode.parent = currentNode;
+            }
         }
 
-        return false;
+        ClosedSetList.Add(currentNode);
     }
 
-    // Metodo para imprimir el camino encontrado
-    /* *Reconstruye y muestra el camino desde el nodo 
-      objetivo hasta el nodo de inicio.
-       *Utiliza el método ColorPath() para 
-        resaltar visualmente el camino en Unity. */
-    public void PrintPath(Node target)
+    return false;
+}
+
+// Método para imprimir el camino encontrado
+public void PrintPath(Node target)
+{
+    List<Node> pathToGoal = new List<Node>();
+    Node currentNode = target;
+    while (currentNode != null)
     {
-        List<Node> pathToGoal = new List<Node>();
-        Node currentNode = target;
-        while (currentNode != null)
-        {
-            pathToGoal.Add(currentNode);
-            currentNode = currentNode.parent;
-        }
-        pathToGoal.Reverse(); // Invertir el camino para imprimirlo en orden correcto
-
-        StartCoroutine(ColorPath(pathToGoal));
+        pathToGoal.Add(currentNode);
+        currentNode = currentNode.parent;
     }
+    pathToGoal.Reverse(); // Invertir el camino para imprimirlo en orden correcto
 
-
-
+    StartCoroutine(ColorPath(pathToGoal));
+}
 
     // Corrutina para cambiar el color de los nodos en el camino
-    /* Cambia el color de los nodos en el camino para resaltarlos
-       visualmente en Unity.
-       *Utiliza una corrutina para aplicar un retraso entre 
-       cada cambio de color.*/
     IEnumerator ColorPath(List<Node> path)
     {
         foreach (Node node in path)
@@ -231,7 +229,6 @@ public class BaseGraph : MonoBehaviour
     }
 
     // Método para encontrar los nodos vecinos de un nodo dado
-    /* Encuentra los nodos vecinos de un nodo dado en el grafo.*/
     public List<Edge> FindNeighbors(Node in_node)
     {
         List<Edge> out_list = new List<Edge>();
@@ -288,3 +285,5 @@ public class BaseGraph : MonoBehaviour
         }
     }
 }
+
+

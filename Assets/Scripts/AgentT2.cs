@@ -6,48 +6,54 @@ public class AgentT2 : MonoBehaviour
 {
     public float speed = 5f; // Velocidad del agente
     public float rotationSpeed = 2f; // Velocidad de rotación del agente
-    private List<Node> pathToFollow = new List<Node>(); // Lista de nodos que el agente debe seguir
-    private int currentNodeIndex = 0; // Índice del nodo actual al que el agente se dirige
+    private List<GameObject> targetCubes = new List<GameObject>(); // Lista de cubos objetivo que representan los nodos
+    private int currentTargetIndex = 0; // Índice del cubo objetivo actual al que el agente se dirige
+    private bool reachedDestination = false; // Variable para rastrear si el agente ha alcanzado el destino
 
     void Start()
     {
-        // Obtener la lista de nodos que el agente debe seguir del componente BaseGraph
+        // Obtener la lista de cubos objetivo que representan los nodos del componente BaseGraph
         BaseGraph baseGraph = FindObjectOfType<BaseGraph>();
         if (baseGraph != null)
         {
-            pathToFollow = baseGraph.GetPathToFollow();
+            targetCubes = baseGraph.GetTargetCubes();
         }
     }
 
     void Update()
     {
-        // Verificar si hay nodos en la lista de nodos a seguir
-        if (pathToFollow.Count > 0)
+        // Verificar si el agente ha alcanzado el destino y detener el movimiento
+        if (reachedDestination)
         {
-            // Obtener la dirección hacia el nodo actual
-            Vector3 direction = (pathToFollow[currentNodeIndex].position - transform.position).normalized;
+            return;
+        }
 
-            // Rotar hacia la dirección del nodo actual
+        // Verificar si hay cubos objetivo en la lista de cubos a seguir
+        if (targetCubes.Count > 0)
+        {
+            // Obtener la dirección hacia el cubo objetivo actual
+            Vector3 direction = (targetCubes[currentTargetIndex].transform.position - transform.position).normalized;
+
+            // Rotar hacia la dirección del cubo objetivo actual
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Time.deltaTime);
 
-            // Moverse hacia adelante en la dirección del nodo actual
+            // Moverse hacia adelante en la dirección del cubo objetivo actual
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
 
-            // Verificar si el agente está lo suficientemente cerca del nodo actual
-           // Verificar si el agente está lo suficientemente cerca del nodo actual
-if (Vector3.Distance(transform.position, pathToFollow[currentNodeIndex].position) < 0.1f)
-{
-    // Avanzar al siguiente nodo en la lista
-    currentNodeIndex++;
+            // Verificar si el agente está lo suficientemente cerca del cubo objetivo actual
+            if (Vector3.Distance(transform.position, targetCubes[currentTargetIndex].transform.position) < 0.1f)
+            {
+                // Avanzar al siguiente cubo objetivo en la lista
+                currentTargetIndex++;
 
-    // Verificar si el agente ha alcanzado el último nodo
-    if (currentNodeIndex >= pathToFollow.Count)
-    {
-        // Llegó al destino, por lo que puede dejar de moverse
-        pathToFollow.Clear();
-    }
-}
-
+                // Verificar si el agente ha alcanzado el último cubo objetivo
+                if (currentTargetIndex >= targetCubes.Count)
+                {
+                    // Llegó al destino, por lo que puede dejar de moverse
+                    reachedDestination = true;
+                    targetCubes.Clear();
+                }
+            }
         }
     }
 }
