@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
-
 public class RandomM : MonoBehaviour 
 {
     public NavMeshAgent agent; // El agente que se moverá.
@@ -19,65 +18,92 @@ public class RandomM : MonoBehaviour
     public AudioClip deathSound;
     public AudioSource audioSource;
     public string sceneToLoad;
+    private Animator animator;
+    public bool Patrol;
+    public bool Attack;
 
     private void Awake()
     {
-        player = GameObject.Find("AgentN").transform; // Encuentra al jugador.
+        player = GameObject.Find("AgentV2").transform; // Encuentra al jugador.
         agent = GetComponent<NavMeshAgent>(); // Obtiene el componente del agente.
+        animator = GetComponent<Animator>(); // Obtener el componente Animator
     }
 
- 
-private void Update()
-{
-    // Comprueba si el jugador está dentro del rango de visión o ataque.
-    playerInSightRange = IsPlayerInSightRange();
-    playerInAttackRange = IsPlayerInAttackRange();
-
-    // Si el jugador no está en el rango de visión ni en el rango de ataque, patrulla.
-    if (!playerInSightRange && !playerInAttackRange)
-        Patroling();
-    
-    // Si el jugador está en el rango de visión pero no en el rango de ataque, persigue al jugador.
-    if (playerInSightRange && !playerInAttackRange)
-        ChasePlayer();
-    
-    // Si el jugador está en el rango de visión y en el rango de ataque, ataca al jugador.
-    if (playerInSightRange && playerInAttackRange)
-        AttackPlayer();
-}
-
-// Comprueba si el jugador está dentro del rango de visión del agente.
-private bool IsPlayerInSightRange()
-{
-    Vector3 directionToPlayer = player.position - transform.position;
-    if (directionToPlayer.magnitude <= sightRange)
+    private void Update()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, directionToPlayer, out hit, sightRange))
+        // Comprueba si el jugador está dentro del rango de visión o ataque.
+        playerInSightRange = IsPlayerInSightRange();
+        playerInAttackRange = IsPlayerInAttackRange();
+
+        // Si el jugador no está en el rango de visión ni en el rango de ataque, patrulla.
+        if (!playerInSightRange && !playerInAttackRange)
         {
-            // Si el rayo choca con el jugador, devuelve verdadero.
-            if (hit.transform == player)
-            {
-                return true;
-            }
+            Patrol = true;
+            Attack = false;
+            animator.SetBool("Patrol", true);
+            animator.SetBool("Attack", false);
+            Patroling();
+        }
+    
+        // Si el jugador está en el rango de visión pero no en el rango de ataque, persigue al jugador.
+        if (playerInSightRange && !playerInAttackRange)
+        {
+            Patrol = false;
+            Attack = false;
+            animator.SetBool("Patrol", false);
+            animator.SetBool("Attack", false);
+            ChasePlayer();
+        }
+    
+        // Si el jugador está en el rango de visión y en el rango de ataque, ataca al jugador.
+        if (playerInSightRange && playerInAttackRange)
+        {
+            Patrol = false;
+            Attack = true;
+            animator.SetBool("Patrol", false);
+            animator.SetBool("Attack", true);
+            AttackPlayer();
         }
     }
-    // Si no se encuentra al jugador, devuelve falso.
-    return false;
-}
 
-// Comprueba si el jugador está dentro del rango de ataque del agente.
-private bool IsPlayerInAttackRange()
-{
-    Vector3 directionToPlayer = player.position - transform.position;
-    // Si la distancia al jugador es menor o igual que el rango de ataque, devuelve verdadero.
-    return directionToPlayer.magnitude <= attackRange;
-}
+    // Comprueba si el jugador está dentro del rango de visión del agente.
+    private bool IsPlayerInSightRange()
+    {
+        Vector3 directionToPlayer = player.position - transform.position;
+        if (directionToPlayer.magnitude <= sightRange)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, directionToPlayer, out hit, sightRange))
+            {
+                // Si el rayo choca con el jugador, devuelve verdadero.
+                if (hit.transform == player)
+                {
+                    return true;
+                }
+            }
+        }
+        // Si no se encuentra al jugador, devuelve falso.
+        return false;
+    }
 
+    // Comprueba si el jugador está dentro del rango de ataque del agente.
+    private bool IsPlayerInAttackRange()
+    {
+        Vector3 directionToPlayer = player.position - transform.position;
+        // Si la distancia al jugador es menor o igual que el rango de ataque, devuelve verdadero.
+        return directionToPlayer.magnitude <= attackRange;
+    }
 
     private void Patroling()
     {
-        if (!walkPointSet) SearchWalkPoint(); // Si el agente no tiene un punto de destino, busca uno.
+        if (!walkPointSet) 
+        {
+            SearchWalkPoint(); // Si el agente no tiene un punto de destino, busca uno.
+            Patrol = true;
+            Attack = false;
+            animator.SetBool("Patrol", true);
+            animator.SetBool("Attack", false);
+        }
         if (walkPointSet) agent.SetDestination(walkPoint); // Si el agente tiene un punto de destino, muévete hacia él.
 
         Vector3 distanceToWalkPoint = transform.position - walkPoint; // La distancia al punto de destino.
@@ -144,4 +170,3 @@ private bool IsPlayerInAttackRange()
         SceneManager.LoadScene(sceneToLoad);
     }
 }
-

@@ -18,6 +18,7 @@ public class PlayerMovementController : MonoBehaviour
     public float _runSpeed = 4f;
     public ParticleSystem WalkDecal;
     private MovementStates _currentMovement;
+    private Animator animator;
     public MovementStates CurrentMovement
     {
         get => _currentMovement;
@@ -46,6 +47,7 @@ public class PlayerMovementController : MonoBehaviour
 
     void Start()
     {
+        animator = GetComponent<Animator>();
         // Register listener events for inputs
         _inputMapping.Default.Walk.performed += Walk;
         _inputMapping.Default.Run.performed += Run;
@@ -56,10 +58,12 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Update()
     {
+
         // Confirm that the player is done navigating
         if (!_needToRotate && !IsNavigating && _currentMovement != MovementStates.None)
         {
             StopNavigation();
+            animator.SetBool("Run", false);
         }
         // Navigation is likely starting
         else if (_needToRotate)
@@ -70,6 +74,7 @@ public class PlayerMovementController : MonoBehaviour
             {
                 _agent.SetDestination(_moveTarget);
                 // AnimationController.Instance.CurrentState = CurrentMovement;
+                animator.SetBool("Run",true);
                 _needToRotate = false;
             }
         }
@@ -86,6 +91,8 @@ public class PlayerMovementController : MonoBehaviour
     {
         CurrentMovement = MovementStates.Run;
         // AnimationController.Instance.CurrentState = CurrentMovement;
+        animator.SetBool("Run",true);
+
     }
 
     /// <summary>
