@@ -121,7 +121,7 @@ public class PatrolAgentFSM : NaiveFSM
     [Range(0.25f, 20.0f)]
     public float TimeBeforeRotating = 3.0f;
     [Range(0.1f, 10.0f)]
-    public float TimeDetectingPlayerBeforeEnteringAlert = 2.0f;
+    public float TimeDetectingPlayerBeforeEnteringAlert = 1.0f;
 
 
     // Grupo de variables para el estado de Alerta (NaiveAlertState)
@@ -335,6 +335,7 @@ public class PatrolAgentFSM : NaiveFSM
     {
         if (canShoot)
         {
+            _Animator.SetBool("Ataque", true);
             
             Vector3 directionToPlayer = (player.transform.position - firePoint.position).normalized;
 

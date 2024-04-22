@@ -66,125 +66,139 @@ public class NaiveAlertState : NaiveFSMState
 
 
     public override void Enter()
-    {
-        base.Enter();
-        LastTimePlayerSeen = Time.realtimeSinceStartup;
-        //Establecemos la animacion a usar
-        PatrolFSMRef._Animator.SetBool("Alerta", true);
-        PatrolFSMRef.PlayDetectedMusic();
-        // Tal vez Time.time es una mejor opción que: Time.realtimeSinceStartup
-        AccumulatedTimeDetectingPlayerBeforeEnteringAttack = 0.0f;
-        _currentSubState = AlertSubState.Stopped; // Iniciamos en el subestado Stopped siempre.
-    }
+{
+    base.Enter();
+    LastTimePlayerSeen = Time.realtimeSinceStartup;
+    //Establecemos la animacion a usar
+    //PatrolFSMRef._Animator.SetBool("Alerta", true);
+    PatrolFSMRef.PlayDetectedMusic();
+    // Tal vez Time.time es una mejor opción que: Time.realtimeSinceStartup
+    TimeDetectingPlayerBeforeEnteringAttack = 3.0f;
+    AccumulatedTimeDetectingPlayerBeforeEnteringAttack = 0.0f;
+    PatrolFSMRef._light.color = Color.yellow;
+    _currentSubState = AlertSubState.Stopped; // Iniciamos en el subestado Stopped siempre.
+}
 
-    // Update is called once per frame
-    public override void Update()
+// Update is called once per frame
+public override void Update()
+{
+    // base.Update();
+    // Time.realtimeSinceStartup
+    CheckFOV();
+    
+    if (_currentSubState == AlertSubState.Stopped)
     {
-        // base.Update();
-        // Time.realtimeSinceStartup
-
-        if (_currentSubState == AlertSubState.Stopped)
+        
+        if(PatrolFSMRef.DetectedPlayer)
         {
-            // Aquí tendríamos la parte que ya conocemos sobre pasar al estado de Ataque
-            // Si sí estamos viendo al jugador, hacemos lo siguiente:
-            // tenemos que estar en el subestado Stopped para seguir seguir acumulando este tiempo.
             AccumulatedTimeDetectingPlayerBeforeEnteringAttack += Time.deltaTime;
-            if (AccumulatedTimeDetectingPlayerBeforeEnteringAttack > TimeDetectingPlayerBeforeEnteringAttack)
+        }
+        
+        // Aquí tendríamos la parte que ya conocemos sobre pasar al estado de Ataque
+        // Si sí estamos viendo al jugador, hacemos lo siguiente:
+        // tenemos que estar en el subestado Stopped para seguir seguir acumulando este tiempo.
+
+        if (AccumulatedTimeDetectingPlayerBeforeEnteringAttack > TimeDetectingPlayerBeforeEnteringAttack)
+        {
+            PatrolAgentFSM SpecificFSM = (PatrolAgentFSM)_FSM;
+            NaiveAttackState AttackStateInstance = SpecificFSM.AttackStateRef;
+            _FSM.ChangeState(AttackStateInstance);
+            return;
+        }
+
+        if (LastTimePlayerSeen == -1)
+        {
+            // entonces lo acabamos de ver, (si no no estaríamos entrando a este subestado).
+            LastTimePlayerSeen = Time.realtimeSinceStartup;
+        }
+        else
+        {
+            // Si no estamos haciendo cosas para pasar al estado de ataque, 
+            // entonces, por nuestro diseño, estaríamos haciendo cosas que nos devuelvan al estado de Patrullaje.
+            float TranscurredTime = Time.realtimeSinceStartup - LastTimePlayerSeen;
+
+            // Si después de un cierto tiempo de la última vez que detectó al jugador ya no lo ha visto.
+            if (TimeSinceLastSeenTreshold < TranscurredTime)
             {
-                PatrolAgentFSM SpecificFSM = (PatrolAgentFSM)_FSM;
-                NaiveAttackState AttackStateInstance = SpecificFSM.AttackStateRef;
-                _FSM.ChangeState(AttackStateInstance);
+                // seteamos LastTimePlayerSeen en -1, para que sepamos que no es válido ahorita.
+                LastTimePlayerSeen = -1;
+                _currentSubState = AlertSubState.GoingToCheck;
+                // Entonces, vamos a la última posición conocida del sospechoso. (A una cierta velocidad de movimiento
+                // Le ponemos al NavMesh que su destination es la última posición  conocida del sopechoso
+                /* Recordatorio, tenemos que castearla al tipo específico de FSM que es, para acceder
+                acceder a las variables de dicho tipo específico. Pero eso ya lo hicimos y lo guardamos en 
+                PatrolFSMRef. */
+                PatrolFSMRef._NavMeshAgent.SetDestination(PatrolFSMRef.LastKnownPlayerPosition);
+                // A lo que tendrían que estar atentos es al mensaje/trigger que el NavMesh manda al llegar a su
+                // destionation
+                // Si no hay tal mensaje, se podría hacer como se muestra aquí:
+                // https://docs.unity3d.com/ScriptReference/AI.NavMeshAgent-destination.html
+                // Sino, checar aquí:
+                // https://docs.unity3d.com/ScriptReference/AI.NavMeshAgent.html
                 return;
             }
-
-            if (LastTimePlayerSeen == -1)
-            {
-                // entonces lo acabamos de ver, (si no no estaríamos entrando a este subestado).
-                LastTimePlayerSeen = Time.realtimeSinceStartup;
-            }
-            else
-            {
-                // Si no estamos haciendo cosas para pasar al estado de ataque, 
-                // entonces, por nuestro diseño, estaríamos haciendo cosas que nos devuelvan al estado de Patrullaje.
-                float TranscurredTime = Time.realtimeSinceStartup - LastTimePlayerSeen;
-
-                // Si después de un cierto tiempo de la última vez que detectó al jugador ya no lo ha visto.
-                if (TimeSinceLastSeenTreshold < TranscurredTime)
-                {
-                    // seteamos LastTimePlayerSeen en -1, para que sepamos que no es válido ahorita.
-                    LastTimePlayerSeen = -1;
-                    _currentSubState = AlertSubState.GoingToCheck;
-                    // Entonces, vamos a la última posición conocida del sospechoso. (A una cierta velocidad de movimiento
-                    // Le ponemos al NavMesh que su destination es la última posición  conocida del sopechoso
-                    /* Recordatorio, tenemos que castearla al tipo específico de FSM que es, para acceder
-                    acceder a las variables de dicho tipo específico. Pero eso ya lo hicimos y lo guardamos en 
-                    PatrolFSMRef. */
-                    PatrolFSMRef._NavMeshAgent.SetDestination(PatrolFSMRef.LastKnownPlayerPosition);
-                    // A lo que tendrían que estar atentos es al mensaje/trigger que el NavMesh manda al llegar a su
-                    // destionation
-                    // Si no hay tal mensaje, se podría hacer como se muestra aquí:
-                    // https://docs.unity3d.com/ScriptReference/AI.NavMeshAgent-destination.html
-                    // Sino, checar aquí:
-                    // https://docs.unity3d.com/ScriptReference/AI.NavMeshAgent.html
-                    return;
-                }
-            }
         }
-        if (_currentSubState == AlertSubState.GoingToCheck)
+    }
+    if (_currentSubState == AlertSubState.GoingToCheck)
+    {
+        // Si vemos otra vez al jugador, inmediatamente pasamos al estado de Stopped.
+        // if( detected)
+        // Then: _currentSubState = AlertSubState.Stopped;
+        // Reinicializar las variables o valores necesarios.
+        // por consistencia, si cambiamos de subestados, también vamos a llamar return, como si 
+        // fueran estados grandes y no subestados.
+        // Tenemos que checar si ya llegamos a la posición deseada (que es la última posicíón conocida)
+        // Le damos rango de tolerancia a esta distancia entre nuestra posición y la última posición conocida
+        float dist = Vector3.Distance(_FSM.transform.position, PatrolFSMRef.LastKnownPlayerPosition);
+        PatrolFSMRef._Animator.SetBool("Alerta", true);
+        if (dist < DistanceToGoalTolerance)  // DE HECHO, no sería necesario este Tolerance, porque el NavMesh ya tiene un valor para esto.
         {
-            PatrolFSMRef._Animator.SetBool("Alerta", true);
-            // Si vemos otra vez al jugador, inmediatamente pasamos al estado de Stopped.
-            // if( detected)
-            // Then: _currentSubState = AlertSubState.Stopped;
-            // Reinicializar las variables o valores necesarios.
-            // por consistencia, si cambiamos de subestados, también vamos a llamar return, como si 
-            // fueran estados grandes y no subestados.
-
-            // Tenemos que checar si ya llegamos a la posición deseada (que es la última posicíón conocida)
-            // Le damos rango de tolerancia a esta distancia entre nuestra posición y la última posición conocida
-            float dist = Vector3.Distance(_FSM.transform.position, PatrolFSMRef.LastKnownPlayerPosition);
-            if (dist < DistanceToGoalTolerance)  // DE HECHO, no sería necesario este Tolerance, porque el NavMesh ya tiene un valor para esto.
-            {
+            
                 // Entonces ya estamos lo suficientemente cerca.
                 // Entonces ya nos podemos empezar a regresar a la InitialPatrolPosition
                 // Le pondríamos al NavMesh que su "destination" es esa initial Patrol position.
                 PatrolFSMRef._NavMeshAgent.SetDestination(PatrolFSMRef.InitialPatrolPosition);
                 _currentSubState = AlertSubState.ReturningToPosition;
                 return;
-            }
         }
-        if (_currentSubState == AlertSubState.ReturningToPosition)
-        {
-            PatrolFSMRef._Animator.SetBool("Alerta", true);
-            // Seguir checando a ver si de camino a la posición inicial vemos al infiltrador.
-            // Si sí lo vemos, nos vamos al estado de stopped
-            // y actualizamos el valor de LastKnownLocation
-
-            // REEMPLAZAR EL 1.0F CON UNA VARIABLE!
-            if (Vector3.Distance(_FSM.transform.position, PatrolFSMRef.InitialPatrolPosition) < DistanceToGoalTolerance)
-            {
-                // Si no, nada más tenemos que checar que lleguemos a la posición inicial de patrullaje
-                // y cuando lo hagamos, pasamos al estado de patrullaje.
-                NaivePatrolState PatrolStateInstance = PatrolFSMRef.PatrolStateRef;
-                _FSM.ChangeState(PatrolStateInstance);
-                return;
-            }
-        }
-
-        // Esto de ir a la última posición conocida es como un "sub-estado" del estado de alerta.
-        // Digamos: Subestado de IrAChecar.
-        // Porque si no pasa nada, te vas al estado de patrullaje, 
-        // Pero si sí ves al jugador mientras estás en IrAChecar, te quedas quieto y esperas a ver
-        // si tienes que volver a IrAChecar o si pasas al estado de Ataque.
-
-
-        //
-        // Si al llegar a esa última posición conocida seguimos sin detectar al jugador,
-        // entonces el agente se regresará hacia el punto de patrullaje.
-        // Si llega al punto de patrullaje y sigue sin detectar al jugador, 
-        // entonces pasará al estado de patrullaje.
+    
+        
 
     }
+    if (_currentSubState == AlertSubState.ReturningToPosition)
+    {
+        // Seguir checando a ver si de camino a la posición inicial vemos al infiltrador.
+        // Si sí lo vemos, nos vamos al estado de stopped
+        // y actualizamos el valor de LastKnownLocation
+
+        // REEMPLAZAR EL 1.0F CON UNA VARIABLE!
+         PatrolFSMRef._Animator.SetBool("Alerta", true);
+        if (Vector3.Distance(_FSM.transform.position, PatrolFSMRef.InitialPatrolPosition) < DistanceToGoalTolerance)
+        {
+           
+            // Si no, nada más tenemos que checar que lleguemos a la posición inicial de patrullaje
+            // y cuando lo hagamos, pasamos al estado de patrullaje.
+            NaivePatrolState PatrolStateInstance = PatrolFSMRef.PatrolStateRef;
+            _FSM.ChangeState(PatrolStateInstance);
+            return;
+        }
+    }
+
+    // Esto de ir a la última posición conocida es como un "sub-estado" del estado de alerta.
+    // Digamos: Subestado de IrAChecar.
+    // Porque si no pasa nada, te vas al estado de patrullaje, 
+    // Pero si sí ves al jugador mientras estás en IrAChecar, te quedas quieto y esperas a ver
+    // si tienes que volver a IrAChecar o si pasas al estado de Ataque.
+
+
+    //
+    // Si al llegar a esa última posición conocida seguimos sin detectar al jugador,
+    // entonces el agente se regresará hacia el punto de patrullaje.
+    // Si llega al punto de patrullaje y sigue sin detectar al jugador, 
+    // entonces pasará al estado de patrullaje.
+
+
+}
 
     public override void Exit()
     {

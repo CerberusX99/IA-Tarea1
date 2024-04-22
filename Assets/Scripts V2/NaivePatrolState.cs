@@ -113,7 +113,7 @@ public class NaivePatrolState : NaiveFSMState
     {
         // Rotar el agente seg�n el �ngulo de rotaci�n definido
         agentTransform.transform.Rotate(Vector3.up, RotationAngle);
-        PatrolFSMRef._Animator.SetBool("Patrullando", true);
+        //PatrolFSMRef._Animator.SetBool("Patrullando", true);
         
     }
 

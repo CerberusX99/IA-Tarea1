@@ -32,58 +32,61 @@ public class NaiveAttackState : NaiveFSMState
         AttackVisionDistanceMultiplier = in_AttackVisionDistanceMultiplier;
     }
 
-    public override void Enter()
+  public override void Enter()
+{
+    base.Enter();
+   
+    //Inicializamos la variable de cuanto tiempo tardara en perder el estado de ataque
+    TimeToChangeState = 5f;
+    //Inicializamos la animacion al entrar a este estado
+    PatrolFSMRef._Animator.SetBool("Ataque", true);
+    PatrolFSMRef.PlayAttackMusic();
+    //PatrolFSMRef._Animator.SetBool("Alerta", true);
+    agent = GameObject.Find("Ghost");
+    PatrolFSMRef._light.color = Color.red;
+}
+
+public override void Update()
+{
+    base.Update();
+     PatrolFSMRef.Shoot();
+    
+    //Establecemos para donde se va a dirigir mi personaje en el estado de ataque
+    Vector3 directionToPlayer = agent.transform.position - _FSM.transform.position;
+    //Establecemos la luz roja
+    PatrolFSMRef._light.color = Color.red;
+    //Aplicamos el navmesh cuando se vaya en direccion a mi jugador
+    PatrolFSMRef._NavMeshAgent.SetDestination(agent.transform.position);
+
+    //Empezamos a hacer que corra el timmpo para regresar de estado
+    TimeToChangeState -= Time.deltaTime;
+
+    //Si se acaba el tiempo regresa al estado de alerta
+    if (TimeToChangeState <= TimeBeforeChangeState)
     {
-        base.Enter();
-        //Inicializamos la variable de cuanto tiempo tardara en perder el estado de ataque
-        TimeToChangeState = 5f;
-        //Inicializamos la animacion al entrar a este estado
-        PatrolFSMRef._Animator.SetBool("Ataque", true);
-        
-        PatrolFSMRef.PlayAttackMusic(); 
-        //PatrolFSMRef._Animator.SetBool("Alerta", true);
-        agent = GameObject.Find("Ghost");
-        PatrolFSMRef._light.color = Color.red;
+        NaivePatrolState AlertStateInstance = PatrolFSMRef.PatrolStateRef;
+        PatrolFSMRef._NavMeshAgent.SetDestination(PatrolFSMRef.InitialPatrolPosition);
+        _FSM.ChangeState(AlertStateInstance);
+        return;
     }
 
-    public override void Update()
+    //Si la distancia de la direccion a la que vamos con el jugador es menor a una unidad de unity destruye el personaje
+    if (directionToPlayer.magnitude < 1.0f)
     {
-        PatrolFSMRef.Shoot();
-        base.Update();
-        //Establecemos para donde se va a dirigir mi personaje en el estado de ataque
-        Vector3 directionToPlayer = agent.transform.position - _FSM.transform.position;
-        //Establecemos la luz roja
-        PatrolFSMRef._light.color = Color.red;
-        //Aplicamos el navmesh cuando se vaya en direccion a mi jugador
-        PatrolFSMRef._NavMeshAgent.SetDestination(agent.transform.position);
-
-        //Empezamos a hacer que corra el timmpo para regresar de estado
-        TimeToChangeState -= Time.deltaTime;
-
-        //Si se acaba el tiempo regresa al estado de alerta
-        if (TimeToChangeState <= TimeBeforeChangeState)
-        {
-            NaivePatrolState AlertStateInstance = PatrolFSMRef.PatrolStateRef;
-            _FSM.ChangeState(AlertStateInstance);
-            return;
-        }
-       
-        //Si la distancia de la direccion a la que vamos con el jugador es menor a una unidad de unity destruye el personaje
-        if (directionToPlayer.magnitude < 1.0f)
-        {
-            NaivePatrolState PatrolStateInstance = PatrolFSMRef.PatrolStateRef;
-            _FSM.ChangeState(PatrolStateInstance);
-            DestroyPlayer();
-            return;
-        }
-
+        NaivePatrolState PatrolStateInstance = PatrolFSMRef.PatrolStateRef;
+        PatrolFSMRef._NavMeshAgent.SetDestination(PatrolFSMRef.InitialPatrolPosition);
+        _FSM.ChangeState(PatrolStateInstance);
+        DestroyPlayer();
+        return;
     }
+
+}
 
     public override void Exit()
     {
         //Salimos de las animacioes
         PatrolFSMRef._Animator.SetBool("Ataque", false);
-        PatrolFSMRef._Animator.SetBool("Alerta", true);
+       
         base.Exit();
 
     }
