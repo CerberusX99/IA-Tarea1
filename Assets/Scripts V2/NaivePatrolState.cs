@@ -52,11 +52,13 @@ public class NaivePatrolState : NaiveFSMState
 
     public override void Enter()
     {
+        PatrolFSMRef.PlayNotDetectedMusic();
         // 
         base.Enter();
         //Establecemos la animacion a usar
         PatrolFSMRef._Animator.SetBool("Patrullando", true);
-        PatrolFSMRef.PlayNotDetectedMusic();
+         
+        
         PatrolFSMRef._Animator.SetBool("Alerta", false);
         agentTransform = GameObject.Find("Guard");
         Debug.Log("Entr� al estado de Patrullaje.");

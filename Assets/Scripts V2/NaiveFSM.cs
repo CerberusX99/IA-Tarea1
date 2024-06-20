@@ -57,7 +57,7 @@ public class NaiveFSM : MonoBehaviour
 
     private void OnGUI()
     {
-        string text = _CurrentState != null ? _CurrentState.Name : "No current State asigned";
-        GUILayout.Label($"<size=40>{text}</size>");
+        //string text = _CurrentState != null ? _CurrentState.Name : "No current State asigned";
+        //GUILayout.Label($"<size=40>{text}</size>");
     }
 }

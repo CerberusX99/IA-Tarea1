@@ -17,7 +17,7 @@ public class PatrolAgentFSM : NaiveFSM
     public Light gunFireLight;
     public Transform firePoint;
     private GameObject player;
-
+    public GameObject ghost;
 
     private bool canShoot = true;
 
@@ -50,7 +50,7 @@ public class PatrolAgentFSM : NaiveFSM
     // vacío que sea padre de las walls de su escenario, y hacer que ese padre tenga el Layer de wall, y aplicarle
     // el cambio de layer a todos los hijos (vean la Jerarquía de mi escena para que vean que todas mis walls
     // tienen el tag de Wall).
-    LayerMask WallLayerMask;
+    public LayerMask WallLayerMask;
 
     //Dado que yo no voy a cambiar el color de mi patrulla voy a comentar todo lo relacionado al mesh renderer
     //MeshRenderer _Renderer;
@@ -72,6 +72,7 @@ public class PatrolAgentFSM : NaiveFSM
     private Vector3 _initialPatrolPosition = Vector3.zero;
     public Vector3 InitialPatrolPosition
     {
+        
         get { return _initialPatrolPosition; }
     }
 
@@ -331,31 +332,34 @@ public class PatrolAgentFSM : NaiveFSM
         AttackMusic.Play();
         AttackMusic.loop = true;
     }
-    public void Shoot()
+public void Shoot()
     {
         if (canShoot)
         {
             _Animator.SetBool("Ataque", true);
             
-            Vector3 directionToPlayer = (player.transform.position - firePoint.position).normalized;
+            // Calculate direction from the fire point to the player
+            Vector3 directionToPlayer = (ghost.transform.position - firePoint.position).normalized;
 
+            // Instantiate the bullet with correct rotation
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.LookRotation(directionToPlayer));
             Rigidbody bulletRigidbody = bullet.GetComponent<Rigidbody>();
 
-            
+            // Set the velocity of the bullet towards the player
             bulletRigidbody.velocity = directionToPlayer * bulletSpeed;
 
-            
+            // Enable gun fire light
             gunFireLight.enabled = true;
-
             
+            // Disable gun fire light after a short delay
             Invoke("DisableGunFireLight", 0.1f);
 
-            
+            // Prevent shooting until the next available time based on fire rate
             canShoot = false;
             Invoke("ResetCanShoot", 1.0f / fireRate);
         }
     }
+
 
    
     public void DisableGunFireLight()

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -20,16 +20,16 @@ public class SB_Seek : MonoBehaviour
 
     public SteeringBehavior currentBehavior = SteeringBehavior.Seek;
 
-    // Vector tridimensional para la posición del mouse en el mundo
+    // Vector tridimensional para la posiciï¿½n del mouse en el mundo
     Vector3 mouseWorldPos = Vector3.zero;
 
     public float maxSpeed = 1.0f;
 
-    // Qué tanto tiempo queremos que pase antes de aplicar toda la steering force.
+    // Quï¿½ tanto tiempo queremos que pase antes de aplicar toda la steering force.
     public float maxSteeringForce = 1.0f;
 
     // Rigidbody ya trae dentro:
-    // Vector tridimensional para la aceleración.
+    // Vector tridimensional para la aceleraciï¿½n.
     // Vector tridimensional para representar esa velocidad
     private Rigidbody rb;
 
@@ -38,9 +38,9 @@ public class SB_Seek : MonoBehaviour
     // Referencia al Rigidbody del TargetGameObject.
     private Rigidbody rbTargetGameObject;
 
-    // Si nuestro objetivo está a X de distancia,
+    // Si nuestro objetivo estï¿½ a X de distancia,
     // y nuestro agente se mueve a Y de distancia por segundo,
-    // cuántos segundos nos toma llegar hasta X?
+    // cuï¿½ntos segundos nos toma llegar hasta X?
     // 0 + Y/s = X
     // s = X/Y
     // 5/s = 20
@@ -68,13 +68,13 @@ public class SB_Seek : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Lo que esté dentro de la función update, se va a ejecutar cada que se pueda.
+        // Lo que estï¿½ dentro de la funciï¿½n update, se va a ejecutar cada que se pueda.
         // print("Funcion update");
 
         // Input.mousePosition // Nos da coordenadas en pixeles.
         mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
 
-        mouseWorldPos.z = 0;  // la sobreescribimos con 0 para que no afecte los cálculos en 2D.
+        mouseWorldPos.z = 0;  // la sobreescribimos con 0 para que no afecte los cï¿½lculos en 2D.
 
 
         //velocity = 
@@ -83,22 +83,22 @@ public class SB_Seek : MonoBehaviour
 
         // print(mousePos);
 
-        // ¿Qué son coordenadas de Pixel?
+        // ï¿½Quï¿½ son coordenadas de Pixel?
         // 1920 (en X) * 1080 (en Y)
         // Esto nos da las coordenadas Normalizadas.
         // Normalizado es que va de 0 a 1
         // 0 de pixeles es el 0 de lo normalizado.
         // 1920 de pixeles el 1 de lo normalizado.
-        // Qué número de pixel estaría en el 0.5 de lo normalizado? El 960.
+        // Quï¿½ nï¿½mero de pixel estarï¿½a en el 0.5 de lo normalizado? El 960.
         // 1920 * 0.5 = 960
         // 1920 * 0.2 = 384
 
-        // Aplicamos método de Punta Menos Cola
-        // Ya tenemos la posición del Mouse, Y ya tenemos la posición del agente.
-        // Podemos decir la posición del mouse es la Punta,
-        // ¿cuál es nuestra posición del mouse en el Código? la variable "mousePos".
-        // y la posición de nuestro agente es la cola.
-        // ¿Cuál es la posición de nuestro agente en el Código?
+        // Aplicamos mï¿½todo de Punta Menos Cola
+        // Ya tenemos la posiciï¿½n del Mouse, Y ya tenemos la posiciï¿½n del agente.
+        // Podemos decir la posiciï¿½n del mouse es la Punta,
+        // ï¿½cuï¿½l es nuestra posiciï¿½n del mouse en el Cï¿½digo? la variable "mousePos".
+        // y la posiciï¿½n de nuestro agente es la cola.
+        // ï¿½Cuï¿½l es la posiciï¿½n de nuestro agente en el Cï¿½digo?
         // es la variable position del componente Transform de este GameObject
         // es decir: "transform.position".
         //                  Punta           Menos       Cola
@@ -108,33 +108,33 @@ public class SB_Seek : MonoBehaviour
 
         // print(Time.deltaTime);
 
-        // Nuestra velocidad es igual a nuestra velocidad actual + (la aceleración * tiempo transcurrido)
+        // Nuestra velocidad es igual a nuestra velocidad actual + (la aceleraciï¿½n * tiempo transcurrido)
         // velocity = velocity + (acceleration * Time.deltaTime);
 
-        // Nuestra nueva posición es igual a nuestra posición actual + (la velocidad * tiempo transcurrido)
+        // Nuestra nueva posiciï¿½n es igual a nuestra posiciï¿½n actual + (la velocidad * tiempo transcurrido)
         // transform.position = transform.position + (velocity * Time.deltaTime);
 
-        // Velocidad está definido como: Distancia / Tiempo
+        // Velocidad estï¿½ definido como: Distancia / Tiempo
 
-        // Distancia + Distancia/Tiempo  (Esto de aquí no procedería)
+        // Distancia + Distancia/Tiempo  (Esto de aquï¿½ no procederï¿½a)
 
         // Distancia + (Distancia/Tiempo)*Tiempo
 
-        // Aceleración Distancia/Tiempo^2
+        // Aceleraciï¿½n Distancia/Tiempo^2
     }
 
     void FixedUpdate()
     {
         // Fixed: Fijo
-        // Solo se ejecuta un número fijo de veces por segundo.
-        // Generalmente, ese es número es 60 (o 30).
+        // Solo se ejecuta un nï¿½mero fijo de veces por segundo.
+        // Generalmente, ese es nï¿½mero es 60 (o 30).
         // print("Funcion fixedUpdate");
 
-        // La declaramos aquí para poder usarla DENTRO del switch, pero que siga viva al salir del switch.
+        // La declaramos aquï¿½ para poder usarla DENTRO del switch, pero que siga viva al salir del switch.
         Vector3 Distance = Vector3.zero;
         Vector3 steeringForce = Vector3.zero;
 
-        // Según el valor de la variable currentBehavior, es cuál Steering Behavior vamos a ejecutar.
+        // Segï¿½n el valor de la variable currentBehavior, es cuï¿½l Steering Behavior vamos a ejecutar.
         switch (currentBehavior)
         {
             case SteeringBehavior.None:
@@ -144,16 +144,16 @@ public class SB_Seek : MonoBehaviour
                 }
             case SteeringBehavior.Seek:
                 {
-                    // En qué dirección vamos a hacer que se mueva nuestro agente? En la dirección en la que está el mouse.
-                    // Cuando hablemos de dirección, queremos vectores normalizados (es decir, de magnitude 1).
+                    // En quï¿½ direcciï¿½n vamos a hacer que se mueva nuestro agente? En la direcciï¿½n en la que estï¿½ el mouse.
+                    // Cuando hablemos de direcciï¿½n, queremos vectores normalizados (es decir, de magnitude 1).
                     // Distance = mouseWorldPos - transform.position;
                     steeringForce = Seek(mouseWorldPos);
                     break;
                 }
             case SteeringBehavior.Flee:
                 {
-                    // En qué dirección vamos a hacer que se mueva nuestro agente? En la dirección en la que está el mouse.
-                    // Cuando hablemos de dirección, queremos vectores normalizados (es decir, de magnitude 1).
+                    // En quï¿½ direcciï¿½n vamos a hacer que se mueva nuestro agente? En la direcciï¿½n en la que estï¿½ el mouse.
+                    // Cuando hablemos de direcciï¿½n, queremos vectores normalizados (es decir, de magnitude 1).
                     // Distance = transform.position - mouseWorldPos;
                     steeringForce = Flee(mouseWorldPos);
                     break;
@@ -173,14 +173,14 @@ public class SB_Seek : MonoBehaviour
         }
 
 
-        // Dirección actual de movimiento de nuestro agente:
+        // Direcciï¿½n actual de movimiento de nuestro agente:
         // La vamos a obtener a partir de la velocidad que trae.
-        // Vector3 currentDirection = rb.velocity.normalized;  // Nos da la dirección. Es un vector de magnitud 1.
+        // Vector3 currentDirection = rb.velocity.normalized;  // Nos da la direcciï¿½n. Es un vector de magnitud 1.
         // float currentMagnitude = rb.velocity.magnitude;
 
 
 
-        // Aquí la limitamos a que sea la mínima entre la fuerza que marca el algoritmo y la máxima
+        // Aquï¿½ la limitamos a que sea la mï¿½nima entre la fuerza que marca el algoritmo y la mï¿½xima
         // que deseamos que pueda tener.
         steeringForce = Vector3.Min(steeringForce, steeringForce.normalized * maxSteeringForce);
 
@@ -189,9 +189,9 @@ public class SB_Seek : MonoBehaviour
 
     private Vector3 GetSteeringForce(Vector3 DistanceVector)
     {
-        Vector3 desiredDirection = DistanceVector.normalized;  // queremos la dirección de ese vector, pero de magnitud 1.
+        Vector3 desiredDirection = DistanceVector.normalized;  // queremos la direcciï¿½n de ese vector, pero de magnitud 1.
 
-        // queremos ir para esa dirección lo más rápido que se pueda.
+        // queremos ir para esa direcciï¿½n lo mï¿½s rï¿½pido que se pueda.
         Vector3 desiredVelocity = desiredDirection * maxSpeed;
 
         // La diferencia entre la velocidad que tenemos actualmente y la que queremos tener.
@@ -226,27 +226,27 @@ public class SB_Seek : MonoBehaviour
 
     private Vector3 PredictPosition(Vector3 TargetPosition, Vector3 TargetVelocity)
     {
-        // Pursuit no es mucho más que hacerle Seek a la posición futura del objetivo.
-        // Primero calculamos el tiempo T que nos tomaría llegar al TargetPosition.
+        // Pursuit no es mucho mï¿½s que hacerle Seek a la posiciï¿½n futura del objetivo.
+        // Primero calculamos el tiempo T que nos tomarï¿½a llegar al TargetPosition.
         Vector3 Distance = transform.position - TargetPosition;
-        // con esa distancia, podemos saber cuánto tiempo nos tomará recorrer esa 
-        // distancia usando nuestra máxima velocidad.
+        // con esa distancia, podemos saber cuï¿½nto tiempo nos tomarï¿½ recorrer esa 
+        // distancia usando nuestra mï¿½xima velocidad.
         // TiempoT = Distancia/MaxSpeed
         float predictedTime = Distance.magnitude / maxSpeed;
-        // usamos Distance.magnitude porque queremos cuánto mide el vector, no hacia dónde (o no hacia qué dirección).
-        // Ahora sí podemos predecir la posición futura de nuestro TargetObject.
-        // Su posición futura es: Su posición actual + su velocidad * cuánto tiempo transcurre.
+        // usamos Distance.magnitude porque queremos cuï¿½nto mide el vector, no hacia dï¿½nde (o no hacia quï¿½ direcciï¿½n).
+        // Ahora sï¿½ podemos predecir la posiciï¿½n futura de nuestro TargetObject.
+        // Su posiciï¿½n futura es: Su posiciï¿½n actual + su velocidad * cuï¿½nto tiempo transcurre.
         Vector3 predictedPosition = TargetPosition + TargetVelocity * predictedTime;
 
         return predictedPosition;
     }
 
     // Pursuit
-    // Idea general es "no vayas ahorita hacia donde está tu objetivo,
-    // ve hacia donde va a estar después de cierto tiempo."
-    // queremos saber la posición actual de ese target.
+    // Idea general es "no vayas ahorita hacia donde estï¿½ tu objetivo,
+    // ve hacia donde va a estar despuï¿½s de cierto tiempo."
+    // queremos saber la posiciï¿½n actual de ese target.
     // queremos saber la velocidad actual de ese target.
-    // ¿cuál va a ser el tiempo en el que queremos predecir su posición?
+    // ï¿½cuï¿½l va a ser el tiempo en el que queremos predecir su posiciï¿½n?
     // 
 
 
@@ -255,8 +255,8 @@ public class SB_Seek : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position, mouseWorldPos);
 
-        // Esto es para verificar que Pursuit está funcionando adecuadamente.
-        // Comprobamos que sí lo hace.
+        // Esto es para verificar que Pursuit estï¿½ funcionando adecuadamente.
+        // Comprobamos que sï¿½ lo hace.
         Gizmos.color = Color.red;
         //Gizmos.DrawLine(transform.position,
           //  PredictPosition(TargetGameObject.transform.position, rbTargetGameObject.velocity));

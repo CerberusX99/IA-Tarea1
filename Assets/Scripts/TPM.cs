@@ -101,7 +101,7 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
         // Walking while crouched input handling
-        if (isCrouching && Input.GetKey(KeyCode.W))
+        if (isCrouching && Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
             isWalkingCrouched = true;
             animator.SetBool("WalkingC", true);

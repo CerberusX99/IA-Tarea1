@@ -34,13 +34,14 @@ public class NaiveAttackState : NaiveFSMState
 
   public override void Enter()
 {
+    PatrolFSMRef.PlayAttackMusic();
     base.Enter();
    
     //Inicializamos la variable de cuanto tiempo tardara en perder el estado de ataque
     TimeToChangeState = 5f;
     //Inicializamos la animacion al entrar a este estado
     PatrolFSMRef._Animator.SetBool("Ataque", true);
-    PatrolFSMRef.PlayAttackMusic();
+    
     //PatrolFSMRef._Animator.SetBool("Alerta", true);
     agent = GameObject.Find("Ghost");
     PatrolFSMRef._light.color = Color.red;
@@ -66,6 +67,7 @@ public override void Update()
     {
         NaivePatrolState AlertStateInstance = PatrolFSMRef.PatrolStateRef;
         PatrolFSMRef._NavMeshAgent.SetDestination(PatrolFSMRef.InitialPatrolPosition);
+        
         _FSM.ChangeState(AlertStateInstance);
         return;
     }
@@ -86,7 +88,7 @@ public override void Update()
     {
         //Salimos de las animacioes
         PatrolFSMRef._Animator.SetBool("Ataque", false);
-       
+       PatrolFSMRef._Animator.SetBool("Alerta", true);
         base.Exit();
 
     }
